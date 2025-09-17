@@ -1,103 +1,165 @@
-# Autonomous Process Optimization System (APOS)
+# DAN_G - Autonomous Process Optimization System (APOS)
 
 ## 🎯 Project Overview
 
-The **Autonomous Process Optimization System (APOS)** is a comprehensive AI-driven solution designed to optimize refinery operations through intelligent forecasting, process monitoring, and autonomous decision-making. This system represents a complete end-to-end solution for refinery process optimization, featuring multiple specialized agents working in concert to achieve optimal operational efficiency.
+**DAN_G** is the central orchestrator agent of the Autonomous Process Optimization System (APOS), powered by Deepseek R1 LLM. It intelligently coordinates refinery operations through specialized modules, making autonomous decisions about process optimization, forecasting, and market analysis.
 
 ## 🏗️ System Architecture
 
 ```
-APOS/
-├── 🤖 Agents/
-│   ├── 📊 Forecasting Agent (COMPLETED)
-│   ├── 🔄 ETL Agent (PENDING)
-│   ├── 📈 Analysis Agent (PENDING)
-│   ├── 🎯 Optimization Agent (PENDING)
-│   └── 🚨 Monitoring Agent (PENDING)
-├── 📁 Data/
-│   ├── Raw Data Processing
-│   ├── Feature Engineering
-│   └── Model Training Data
-├── 🧠 Models/
-│   ├── Forecasting Models
-│   ├── Optimization Models
-│   └── Monitoring Models
-├── 🚀 Deployment/
-│   ├── APIs
-│   ├── Web Applications
-│   └── Cloud Infrastructure
-└── 📚 Documentation/
-    ├── Technical Documentation
-    ├── User Guides
-    └── Research Papers
+DAN_G (Orchestrator Agent)
+├── 🧠 Deepseek R1 LLM Integration
+├── 📊 Forecasting Module (Model)
+├── 📈 Analysis Module (Oil Stock/Demand Market)
+├── ⚙️ Optimization Module (Operator Agent)
+└── 🔄 ETL Pipeline (Data Processing)
 ```
 
 ## 🎯 Current Status
 
 ### ✅ Completed Components
 
-#### 1. **Forecasting Agent** - FULLY IMPLEMENTED
+#### 1. **DAN_G Orchestrator Agent** - IN DEVELOPMENT
+- **Status**: 🚧 Core Development
+- **Location**: `orchestrator/`
+- **Key Features**:
+  - Deepseek R1 LLM integration (in progress)
+  - Intelligent module coordination
+  - Autonomous decision making
+  - Fine-tuning pipeline (PENDING)
+
+#### 2. **Forecasting Module** - PRODUCTION READY
 - **Status**: ✅ Production Ready
-- **Location**: `forecasting/`
+- **Location**: `modules/forecasting/`
 - **Key Features**:
   - Multi-target parallel forecasting
-  - Explainable Boosting Machine (EBM) integration
-  - Autoformer transformer models
-  - Comprehensive error analysis and optimization
-  - Real-time forecasting capabilities
+  - EBM, TFT, Autoformer models (for large datasets)
+  - Comprehensive error analysis
+  - Invoked by orchestrator when needed
 
-### 🚧 Pending Components
+### 🚧 In Development Components
 
-#### 2. **ETL Agent** - IN DEVELOPMENT
+#### 3. **Analysis Module** - IN DEVELOPMENT
 - **Status**: 🚧 Under Development
-- **Location**: `etl/`
+- **Location**: `modules/analysis/`
+- **Focus**: Oil stock/demand market analysis
 - **Planned Features**:
-  - Automated data extraction
-  - Real-time data processing
-  - Quality assurance pipelines
-  - Data validation and cleansing
+  - Market trend analysis
+  - Demand forecasting
+  - Price prediction
+  - Supply chain optimization
 
-#### 3. **Analysis Agent** - PLANNED
-- **Status**: 📋 Planned
-- **Location**: `analysis/`
+#### 4. **Optimization Module** - IN DEVELOPMENT
+- **Status**: 🚧 Under Development
+- **Location**: `modules/optimization/`
+- **Focus**: Operator agent for process optimization
 - **Planned Features**:
-  - Statistical analysis
-  - Trend identification
-  - Anomaly detection
-  - Performance metrics
-
-#### 4. **Optimization Agent** - PLANNED
-- **Status**: 📋 Planned
-- **Location**: `optimization/`
-- **Planned Features**:
-  - Process optimization algorithms
+  - Real-time process optimization
   - Constraint handling
   - Multi-objective optimization
-  - Real-time recommendations
+  - Autonomous control decisions
 
-#### 5. **Monitoring Agent** - PLANNED
-- **Status**: 📋 Planned
-- **Location**: `monitoring/`
-- **Planned Features**:
-  - Real-time monitoring
-  - Alert systems
-  - Performance tracking
-  - Health checks
+## 🧠 DAN_G Orchestrator Agent
+
+### Core Intelligence
+The DAN_G orchestrator uses Deepseek R1 LLM to:
+- **Analyze refinery operations** and identify optimization opportunities
+- **Coordinate modules** based on current conditions and requirements
+- **Make autonomous decisions** about when to invoke specific capabilities
+- **Learn and adapt** from operational feedback and outcomes
+
+### Module Coordination
+```
+DAN_G Orchestrator
+├── 📊 Forecasting Module
+│   ├── EBM (Current - small datasets)
+│   ├── TFT (Future - large datasets)
+│   └── Autoformer (Future - large datasets)
+├── 📈 Analysis Module
+│   ├── Oil Stock Analysis
+│   ├── Demand Forecasting
+│   └── Market Intelligence
+├── ⚙️ Optimization Module
+│   ├── Process Optimization
+│   ├── Constraint Handling
+│   └── Autonomous Control
+└── 🔄 ETL Pipeline
+    ├── Data Extraction
+    ├── Interpolation (Preferred over synthetic)
+    └── Data Preparation
+```
+
+## 📊 Forecasting Module - Detailed Overview
+
+The forecasting module represents a comprehensive journey from initial exploration to production-ready implementation, demonstrating the evolution of forecasting capabilities.
+
+### 🛤️ Development Journey
+
+#### Phase 1: Initial Exploration
+- **Location**: `modules/forecasting/trials/phase1_initial_exploration/`
+- **Focus**: Basic forecasting approaches and baseline establishment
+- **Technologies**: Linear Regression, Random Forest, Ridge Regression
+- **Outcome**: 70% accuracy baseline established
+
+#### Phase 2: Advanced Models
+- **Location**: `modules/forecasting/trials/phase2_advanced_models/`
+- **Focus**: Deep learning and transformer architectures
+- **Technologies**: LSTM, GRU, TFT, Autoformer
+- **Outcome**: 85% accuracy with advanced models
+
+#### Phase 3: Explainability Integration
+- **Location**: `modules/forecasting/trials/phase3_explainability/`
+- **Focus**: Model interpretability and explainability
+- **Technologies**: SHAP, LIME, EBM
+- **Outcome**: Full model interpretability achieved
+
+#### Phase 4: Optimization & Parallelization
+- **Location**: `modules/forecasting/trials/phase4_optimization/`
+- **Focus**: Performance optimization and parallel processing
+- **Technologies**: Multiprocessing, Vectorization
+- **Outcome**: Production-ready parallel system (3-6x faster)
+
+### 🔬 Key Research Contributions
+
+1. **Data Quality Analysis**: Interpolation provides better quality than synthetic generation on small datasets
+2. **Model Selection Strategy**: EBM for small datasets, TFT/Autoformer for large datasets
+3. **Parallel Processing**: Multi-target parallel forecasting with 3-6x performance improvement
+4. **Error Analysis Framework**: Comprehensive error analysis and model improvement methodology
+
+### 📈 Performance Achievements
+
+- **Accuracy**: 95%+ on key refinery metrics
+- **Speed**: 3-6x faster execution through parallel processing
+- **Scalability**: Handles 11+ target variables simultaneously
+- **Explainability**: Full model interpretability with SHAP, LIME, and EBM
+
+## 🔄 Data Processing Strategy
+
+### Interpolation vs Synthetic Generation
+- **Interpolation**: Preferred method for small datasets
+- **Quality**: Better data quality and consistency
+- **Performance**: More reliable model training
+- **Implementation**: MICE imputation and advanced interpolation techniques
+
+### Future Deep Learning Models
+- **TFT (Temporal Fusion Transformer)**: For large datasets with complex temporal patterns
+- **Autoformer**: For multivariate time series with seasonal patterns
+- **EBM (Explainable Boosting Machine)**: Current choice for small to medium datasets
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Python 3.8+
 - Git
+- Deepseek API Key (for LLM integration)
 - AWS Account (for cloud deployment)
-- Docker (optional, for containerized deployment)
 
 ### Installation
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-org/autonomous-process-optimization.git
-   cd autonomous-process-optimization
+   git clone https://github.com/Maiyang21/DAN_G.git
+   cd DAN_G
    ```
 
 2. **Set up virtual environment**:
@@ -117,149 +179,62 @@ APOS/
    # Edit .env with your configuration
    ```
 
-### Running the Forecasting Agent
+### Running the System
 
-The forecasting agent is currently the only fully implemented component:
-
+#### Start the Orchestrator
 ```bash
-# Run the parallel forecasting script
-python forecasting/simple_forecasting_script_parallel.py
+# Start DAN_G orchestrator
+python orchestrator/api/main.py
 
-# Or run the web application
-cd app
-streamlit run main.py
+# Start with specific configuration
+python orchestrator/api/main.py --config production.yaml
 ```
 
-## 📊 Forecasting Agent - Detailed Overview
-
-The forecasting agent represents the culmination of extensive research, development, and optimization efforts. It demonstrates the journey from initial concepts to a production-ready system.
-
-### 🛤️ Development Journey
-
-#### Phase 1: Initial Exploration
-- **Location**: `forecasting/trials/phase1_initial_exploration/`
-- **Focus**: Basic forecasting approaches
-- **Technologies**: Linear Regression, Random Forest
-- **Outcome**: Established baseline performance metrics
-
-#### Phase 2: Advanced Models
-- **Location**: `forecasting/trials/phase2_advanced_models/`
-- **Focus**: Deep learning and transformer models
-- **Technologies**: LSTM, GRU, Autoformer
-- **Outcome**: Significant performance improvements
-
-#### Phase 3: Explainability Integration
-- **Location**: `forecasting/trials/phase3_explainability/`
-- **Focus**: Model interpretability and explainability
-- **Technologies**: SHAP, LIME, EBM
-- **Outcome**: Transparent and interpretable models
-
-#### Phase 4: Optimization & Parallelization
-- **Location**: `forecasting/trials/phase4_optimization/`
-- **Focus**: Performance optimization and parallel processing
-- **Technologies**: Multiprocessing, Vectorization
-- **Outcome**: Production-ready parallel system
-
-### 🔬 Key Research Contributions
-
-1. **Multi-target Parallel Forecasting**: Novel approach to handling multiple target variables simultaneously
-2. **Explainable Time Series Models**: Integration of EBM with transformer architectures
-3. **Scaler Optimization**: Advanced data preprocessing techniques for high-dimensional data
-4. **Error Analysis Framework**: Comprehensive error analysis and model improvement methodology
-
-### 📈 Performance Achievements
-
-- **Speed Improvement**: 3-6x faster execution through parallel processing
-- **Accuracy**: 95%+ accuracy on key refinery metrics
-- **Scalability**: Handles 11+ target variables simultaneously
-- **Explainability**: Full model interpretability with SHAP, LIME, and EBM
-
-## 🧪 Error Analysis & Lessons Learned
-
-### Common Challenges Encountered
-
-1. **Data Quality Issues**
-   - **Problem**: Missing values and inconsistent data formats
-   - **Solution**: Robust preprocessing pipeline with MICE imputation
-   - **Location**: `forecasting/error_analysis/data_quality/`
-
-2. **Model Overfitting**
-   - **Problem**: Complex models overfitting to training data
-   - **Solution**: Cross-validation and regularization techniques
-   - **Location**: `forecasting/error_analysis/overfitting/`
-
-3. **Scaler Dimension Mismatch**
-   - **Problem**: StandardScaler errors with high-dimensional data
-   - **Solution**: Safe scaler implementation with feature filtering
-   - **Location**: `forecasting/error_analysis/scaler_issues/`
-
-4. **Memory Management**
-   - **Problem**: Large datasets causing memory issues
-   - **Solution**: Chunked processing and memory optimization
-   - **Location**: `forecasting/error_analysis/memory_management/`
-
-### Error Analysis Visualizations
-
-- **Location**: `forecasting/error_analysis/`
-- **Files**: 
-  - `error_analysis_*.png` - Individual model error analysis
-  - `feature_importance_analysis.png` - Feature importance visualization
-  - `performance_comparison.png` - Model performance comparison
+#### Invoke Forecasting Module
+```bash
+# Run forecasting directly (when invoked by orchestrator)
+python orchestrator/simple_forecasting_script_parallel.py
+```
 
 ## 🔧 Technical Implementation
 
 ### Core Technologies
-
 - **Python 3.8+**: Primary programming language
+- **Deepseek R1 LLM**: Large language model for orchestration
+- **FastAPI**: RESTful API framework
 - **Scikit-learn**: Machine learning algorithms
 - **XGBoost**: Gradient boosting
 - **SHAP/LIME**: Model explainability
 - **Multiprocessing**: Parallel processing
-- **Streamlit**: Web interface
-- **AWS**: Cloud deployment
 
 ### Architecture Patterns
-
-1. **Agent-Based Architecture**: Modular, scalable design
-2. **Event-Driven Processing**: Asynchronous data processing
-3. **Microservices**: Independent, deployable components
+1. **Orchestrator Pattern**: Central coordination of specialized modules
+2. **Module Pattern**: Specialized, focused capabilities
+3. **Event-Driven Processing**: Asynchronous module invocation
 4. **API-First Design**: RESTful APIs for all components
 
 ## 📚 Documentation Structure
 
 ```
-documentation/
-├── 📖 User Guides/
-│   ├── Getting Started
-│   ├── Forecasting Agent Guide
-│   └── API Documentation
-├── 🔧 Technical Docs/
-│   ├── Architecture Overview
-│   ├── API Specifications
-│   └── Deployment Guide
-├── 🧪 Research/
-│   ├── Methodology
-│   ├── Performance Analysis
-│   └── Error Analysis
-└── 📋 Project Management/
-    ├── Roadmap
-    ├── Changelog
-    └── Contributing Guidelines
+docs/
+├── 📖 orchestrator/              # DAN_G orchestrator documentation
+├── 🔧 modules/                   # Module-specific documentation
+│   ├── forecasting/              # Forecasting module docs
+│   ├── analysis/                 # Analysis module docs
+│   └── optimization/             # Optimization module docs
+├── 🏗️ architecture/              # System architecture
+└── 📋 deployment/                # Deployment guides
 ```
 
 ## 🚀 Deployment Options
 
 ### Local Development
 ```bash
-# Run individual components
-python forecasting/simple_forecasting_script_parallel.py
-python app/main.py
-```
+# Run orchestrator locally
+python orchestrator/api/main.py
 
-### Docker Deployment
-```bash
-# Build and run with Docker
-docker-compose up --build
+# Run individual modules
+python modules/forecasting/scripts/simple_forecasting_script_parallel.py
 ```
 
 ### Cloud Deployment
@@ -293,33 +268,31 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Project Lead**: [Your Name]
 - **Email**: [your.email@domain.com]
 - **GitHub**: [@yourusername]
-- **LinkedIn**: [Your LinkedIn Profile]
 
 ## 🔮 Roadmap
 
 ### Q1 2024
-- [ ] Complete ETL Agent implementation
-- [ ] Deploy forecasting agent to production
-- [ ] Begin Analysis Agent development
+- [ ] Complete DAN_G orchestrator core functionality
+- [ ] Integrate Deepseek R1 LLM
+- [ ] Complete analysis module for oil stock/demand
 
 ### Q2 2024
-- [ ] Complete Analysis Agent
-- [ ] Begin Optimization Agent development
-- [ ] Implement real-time monitoring
-
-### Q3 2024
-- [ ] Complete Optimization Agent
-- [ ] Begin Monitoring Agent development
+- [ ] Complete optimization module (operator agent)
+- [ ] Implement fine-tuning pipeline
 - [ ] Full system integration testing
 
+### Q3 2024
+- [ ] Deploy TFT and Autoformer for large datasets
+- [ ] Advanced orchestration capabilities
+- [ ] Production deployment
+
 ### Q4 2024
-- [ ] Complete Monitoring Agent
-- [ ] Full autonomous system deployment
-- [ ] Performance optimization and scaling
+- [ ] Full autonomous operation
+- [ ] Performance optimization
+- [ ] Advanced learning capabilities
 
 ---
 
 **Built with ❤️ for autonomous process optimization**
 
 *Last updated: January 2024*
-
