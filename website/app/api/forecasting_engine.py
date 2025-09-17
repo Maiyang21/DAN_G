@@ -225,3 +225,4 @@ class ForecastingEngine:
             self.feature_columns = data['feature_columns']
             self.target_columns = data['target_columns']
             self.trained = True
+

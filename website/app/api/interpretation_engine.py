@@ -294,3 +294,4 @@ class InterpretationEngine:
     def get_sample_interpretation(self, targets):
         """Get sample interpretation data for demonstration."""
         return self.analyze_forecast({}, targets)
+
