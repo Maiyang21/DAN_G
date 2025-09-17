@@ -2,17 +2,17 @@
 
 ## 🎯 Project Overview
 
-**DAN_G** is the central orchestrator agent of the Autonomous Process Optimization System (APOS), powered by Deepseek R1 LLM. It intelligently coordinates refinery operations through specialized modules, making autonomous decisions about process optimization, forecasting, and market analysis.
+**DAN_G** is the central orchestrator agent of the Autonomous Process Optimization System (APOS), powered by a custom Deepseek R1 LLM with altered architecture that has been fine-tuned on Hugging Face using AWS SageMaker. It intelligently coordinates refinery operations through specialized modules, making autonomous decisions about process optimization, forecasting, and market analysis.
 
 ## 🏗️ System Architecture
 
 ```
 DAN_G (Orchestrator Agent)
-├── 🧠 Deepseek R1 LLM Integration
-├── 📊 Forecasting Module (Model)
+├── 🧠 Custom Deepseek R1 LLM (Hugging Face + AWS SageMaker)
+├── 📊 Forecasting Module (XGBoost + Ridge LR)
 ├── 📈 Analysis Module (Oil Stock/Demand Market)
-├── ⚙️ Optimization Module (Operator Agent)
-└── 🔄 ETL Pipeline (Data Processing)
+├── ⚙️ Optimization Module (Operator Agent + RL on Prime Intellect)
+└── 🔄 ETL Pipeline (Data Processing with Interpolation)
 ```
 
 ## 🎯 Current Status
@@ -23,7 +23,8 @@ DAN_G (Orchestrator Agent)
 - **Status**: 🚧 Core Development
 - **Location**: `orchestrator/`
 - **Key Features**:
-  - Deepseek R1 LLM integration (in progress)
+  - Custom Deepseek R1 LLM with altered architecture
+  - Fine-tuned on Hugging Face using AWS SageMaker
   - Intelligent module coordination
   - Autonomous decision making
   - Fine-tuning pipeline (PENDING)
@@ -32,9 +33,10 @@ DAN_G (Orchestrator Agent)
 - **Status**: ✅ Production Ready
 - **Location**: `modules/forecasting/`
 - **Key Features**:
-  - Multi-target parallel forecasting
-  - EBM, TFT, Autoformer models (for large datasets)
-  - Comprehensive error analysis
+  - XGBoost for complex non-linear patterns
+  - Ridge Linear Regression for linear relationships
+  - Ensemble methods for robust predictions
+  - Comprehensive error analysis and optimization
   - Invoked by orchestrator when needed
 
 ### 🚧 In Development Components
@@ -52,7 +54,8 @@ DAN_G (Orchestrator Agent)
 #### 4. **Optimization Module** - IN DEVELOPMENT
 - **Status**: 🚧 Under Development
 - **Location**: `modules/optimization/`
-- **Focus**: Operator agent for process optimization
+- **Focus**: Operator agent with RL post-training
+- **Training**: Prime Intellect environment hub
 - **Planned Features**:
   - Real-time process optimization
   - Constraint handling
@@ -61,37 +64,37 @@ DAN_G (Orchestrator Agent)
 
 ## 🧠 DAN_G Orchestrator Agent
 
-### Core Intelligence
-The DAN_G orchestrator uses Deepseek R1 LLM to:
-- **Analyze refinery operations** and identify optimization opportunities
-- **Coordinate modules** based on current conditions and requirements
-- **Make autonomous decisions** about when to invoke specific capabilities
-- **Learn and adapt** from operational feedback and outcomes
+### Custom Deepseek R1 LLM
+The DAN_G orchestrator uses a custom Deepseek R1 LLM with:
+- **Altered Architecture**: Custom modifications for refinery operations
+- **Fine-tuning**: Trained on Hugging Face using AWS SageMaker
+- **Intelligent Decision Making**: Context-aware module coordination
+- **Adaptive Learning**: Continuous improvement from operational feedback
 
 ### Module Coordination
 ```
 DAN_G Orchestrator
 ├── 📊 Forecasting Module
-│   ├── EBM (Current - small datasets)
-│   ├── TFT (Future - large datasets)
-│   └── Autoformer (Future - large datasets)
+│   ├── XGBoost (Complex patterns)
+│   ├── Ridge LR (Linear relationships)
+│   └── Ensemble (Robust predictions)
 ├── 📈 Analysis Module
 │   ├── Oil Stock Analysis
 │   ├── Demand Forecasting
 │   └── Market Intelligence
 ├── ⚙️ Optimization Module
-│   ├── Process Optimization
-│   ├── Constraint Handling
+│   ├── RL-Trained Operator Agent
+│   ├── Prime Intellect Training
 │   └── Autonomous Control
 └── 🔄 ETL Pipeline
     ├── Data Extraction
-    ├── Interpolation (Preferred over synthetic)
+    ├── Interpolation (Preferred)
     └── Data Preparation
 ```
 
 ## 📊 Forecasting Module - Detailed Overview
 
-The forecasting module represents a comprehensive journey from initial exploration to production-ready implementation, demonstrating the evolution of forecasting capabilities.
+The forecasting module uses XGBoost and Ridge Linear Regression as the primary models, with comprehensive development journey documentation.
 
 ### 🛤️ Development Journey
 
@@ -103,14 +106,14 @@ The forecasting module represents a comprehensive journey from initial explorati
 
 #### Phase 2: Advanced Models
 - **Location**: `modules/forecasting/trials/phase2_advanced_models/`
-- **Focus**: Deep learning and transformer architectures
-- **Technologies**: LSTM, GRU, TFT, Autoformer
+- **Focus**: XGBoost and Ridge LR implementation
+- **Technologies**: XGBoost, Ridge Linear Regression, Ensemble methods
 - **Outcome**: 85% accuracy with advanced models
 
 #### Phase 3: Explainability Integration
 - **Location**: `modules/forecasting/trials/phase3_explainability/`
-- **Focus**: Model interpretability and explainability
-- **Technologies**: SHAP, LIME, EBM
+- **Focus**: Model interpretability for XGBoost and Ridge LR
+- **Technologies**: SHAP, LIME, PDP analysis
 - **Outcome**: Full model interpretability achieved
 
 #### Phase 4: Optimization & Parallelization
@@ -121,17 +124,33 @@ The forecasting module represents a comprehensive journey from initial explorati
 
 ### 🔬 Key Research Contributions
 
-1. **Data Quality Analysis**: Interpolation provides better quality than synthetic generation on small datasets
-2. **Model Selection Strategy**: EBM for small datasets, TFT/Autoformer for large datasets
+1. **Model Selection Strategy**: XGBoost for complex patterns, Ridge LR for linear relationships
+2. **Data Quality Analysis**: Interpolation provides better quality than synthetic generation
 3. **Parallel Processing**: Multi-target parallel forecasting with 3-6x performance improvement
-4. **Error Analysis Framework**: Comprehensive error analysis and model improvement methodology
+4. **Ensemble Methods**: Weighted combination of XGBoost and Ridge LR for robust predictions
 
 ### 📈 Performance Achievements
 
-- **Accuracy**: 95%+ on key refinery metrics
+- **Accuracy**: 95%+ on key refinery metrics (ensemble)
 - **Speed**: 3-6x faster execution through parallel processing
 - **Scalability**: Handles 11+ target variables simultaneously
-- **Explainability**: Full model interpretability with SHAP, LIME, and EBM
+- **Explainability**: Full model interpretability with SHAP, LIME, and PDP
+
+## ⚙️ Optimization Module - RL Post-Training
+
+### Prime Intellect Integration
+The optimization module features:
+- **RL Post-Training**: Reinforcement learning on Prime Intellect environment hub
+- **Operator Agent**: Autonomous process control and optimization
+- **Adaptive Learning**: Continuous improvement from operational feedback
+- **Multi-objective Optimization**: Balancing efficiency, safety, and profitability
+
+### RL Training Process
+1. **Environment Setup**: Prime Intellect refinery simulation
+2. **RL Algorithm**: Proximal Policy Optimization (PPO)
+3. **State Space**: Process variables, equipment status, market conditions
+4. **Action Space**: Control actions, setpoint adjustments
+5. **Reward Function**: Multi-objective reward considering efficiency and safety
 
 ## 🔄 Data Processing Strategy
 
@@ -141,18 +160,20 @@ The forecasting module represents a comprehensive journey from initial explorati
 - **Performance**: More reliable model training
 - **Implementation**: MICE imputation and advanced interpolation techniques
 
-### Future Deep Learning Models
-- **TFT (Temporal Fusion Transformer)**: For large datasets with complex temporal patterns
-- **Autoformer**: For multivariate time series with seasonal patterns
-- **EBM (Explainable Boosting Machine)**: Current choice for small to medium datasets
+### Model Selection Strategy
+- **Small-Medium Datasets**: XGBoost and Ridge LR (current implementation)
+- **Large Datasets**: TFT (Temporal Fusion Transformer) - future
+- **Very Large Datasets**: Autoformer - future
+- **Ensemble**: Weighted combination for robust predictions
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Python 3.8+
 - Git
-- Deepseek API Key (for LLM integration)
-- AWS Account (for cloud deployment)
+- AWS Account (for SageMaker integration)
+- Prime Intellect access (for RL training)
+- XGBoost library
 
 ### Installation
 
@@ -171,6 +192,7 @@ The forecasting module represents a comprehensive journey from initial explorati
 3. **Install dependencies**:
    ```bash
    pip install -r requirements.txt
+   pip install xgboost  # For XGBoost support
    ```
 
 4. **Configure environment**:
@@ -194,21 +216,24 @@ python orchestrator/api/main.py --config production.yaml
 ```bash
 # Run forecasting directly (when invoked by orchestrator)
 python orchestrator/simple_forecasting_script_parallel.py
+
+# Run with specific models
+python orchestrator/simple_forecasting_script_parallel.py --models xgboost,ridge_lr
 ```
 
 ## 🔧 Technical Implementation
 
 ### Core Technologies
 - **Python 3.8+**: Primary programming language
-- **Deepseek R1 LLM**: Large language model for orchestration
-- **FastAPI**: RESTful API framework
-- **Scikit-learn**: Machine learning algorithms
-- **XGBoost**: Gradient boosting
+- **Custom Deepseek R1**: Altered architecture, fine-tuned on Hugging Face + AWS SageMaker
+- **XGBoost**: Gradient boosting for complex patterns
+- **Ridge Linear Regression**: Regularized linear models
+- **Prime Intellect**: RL training environment
 - **SHAP/LIME**: Model explainability
 - **Multiprocessing**: Parallel processing
 
 ### Architecture Patterns
-1. **Orchestrator Pattern**: Central coordination of specialized modules
+1. **Orchestrator Pattern**: Central coordination using custom LLM
 2. **Module Pattern**: Specialized, focused capabilities
 3. **Event-Driven Processing**: Asynchronous module invocation
 4. **API-First Design**: RESTful APIs for all components
@@ -219,9 +244,9 @@ python orchestrator/simple_forecasting_script_parallel.py
 docs/
 ├── 📖 orchestrator/              # DAN_G orchestrator documentation
 ├── 🔧 modules/                   # Module-specific documentation
-│   ├── forecasting/              # Forecasting module docs
-│   ├── analysis/                 # Analysis module docs
-│   └── optimization/             # Optimization module docs
+│   ├── forecasting/              # XGBoost + Ridge LR forecasting
+│   ├── analysis/                 # Oil stock/demand analysis
+│   └── optimization/             # RL-trained operator agent
 ├── 🏗️ architecture/              # System architecture
 └── 📋 deployment/                # Deployment guides
 ```
@@ -259,9 +284,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
+- **Deepseek Team**: For the base LLM architecture
+- **Hugging Face**: For model fine-tuning platform
+- **AWS SageMaker**: For scalable training infrastructure
+- **Prime Intellect**: For RL training environment
+- **XGBoost Team**: For gradient boosting framework
 - **Research Community**: For open-source tools and methodologies
-- **Industry Partners**: For real-world data and validation
-- **Development Team**: For continuous innovation and improvement
 
 ## 📞 Contact
 
@@ -272,23 +300,23 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🔮 Roadmap
 
 ### Q1 2024
-- [ ] Complete DAN_G orchestrator core functionality
-- [ ] Integrate Deepseek R1 LLM
+- [ ] Complete custom Deepseek R1 integration
 - [ ] Complete analysis module for oil stock/demand
+- [ ] Complete RL training on Prime Intellect
 
 ### Q2 2024
-- [ ] Complete optimization module (operator agent)
+- [ ] Complete optimization module (RL-trained operator)
 - [ ] Implement fine-tuning pipeline
 - [ ] Full system integration testing
 
 ### Q3 2024
-- [ ] Deploy TFT and Autoformer for large datasets
+- [ ] Deploy TFT for large datasets
 - [ ] Advanced orchestration capabilities
 - [ ] Production deployment
 
 ### Q4 2024
+- [ ] Deploy Autoformer for very large datasets
 - [ ] Full autonomous operation
-- [ ] Performance optimization
 - [ ] Advanced learning capabilities
 
 ---
