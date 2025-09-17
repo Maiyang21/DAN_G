@@ -1,0 +1,8 @@
+Autoformer Dataset Summary
+==============================
+Total rows: 618
+Total columns (excluding date): 667
+Target columns: 11
+Feature columns: 656
+Date range: 2024-06-01 00:00:00 to 2025-07-31 00:00:00
+Primary target: Total_Stabilized_Naphtha_Product_Flowrate

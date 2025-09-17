@@ -1,0 +1,25 @@
+# Requirements for XGBoost and L1/L2 Regression Comparison Script
+# Core dependencies
+pandas>=1.3.0
+numpy>=1.21.0
+scikit-learn>=1.0.0
+matplotlib>=3.5.0
+seaborn>=0.11.0
+scipy>=1.7.0
+
+# XGBoost for gradient boosting
+xgboost>=1.6.0
+
+# Optional: For enhanced performance
+numba>=0.56.0
+
+# Optional: For additional visualizations
+plotly>=5.0.0
+
+# Optional: For hyperparameter optimization
+optuna>=3.0.0
+
+
+
+
+
