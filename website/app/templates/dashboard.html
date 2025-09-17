@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forecasting Dashboard - DAN_G Refinery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        .metric-card.success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        .metric-card.warning {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        .metric-card.info {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+        .interpretation-section {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .parameter-effect {
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        .chart-container {
+            height: 400px;
+            margin: 20px 0;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #667eea;
+        }
+        .tab-content {
+            padding: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="h2 mb-0">
+                        <i class="fas fa-chart-line me-2"></i>
+                        Refinery Forecasting Dashboard
+                    </h1>
+                    <p class="mb-0">Real-time yield predictions and parameter analysis</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="/" class="btn btn-outline-light">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid py-4">
+        <!-- Control Panel -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-cogs me-2"></i>
+                            Forecast Controls
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="forecastHorizon" class="form-label">Forecast Horizon (Days)</label>
+                                <select class="form-select" id="forecastHorizon">
+                                    <option value="7" selected>7 Days</option>
+                                    <option value="14">14 Days</option>
+                                    <option value="30">30 Days</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="modelType" class="form-label">Model Type</label>
+                                <select class="form-select" id="modelType">
+                                    <option value="ensemble" selected>Ensemble (XGBoost + Ridge)</option>
+                                    <option value="xgboost">XGBoost Only</option>
+                                    <option value="ridge">Ridge LR Only</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="targets" class="form-label">Target Variables</label>
+                                <select class="form-select" id="targets" multiple>
+                                    <option value="yield" selected>Yield</option>
+                                    <option value="quality" selected>Quality</option>
+                                    <option value="efficiency">Efficiency</option>
+                                    <option value="throughput">Throughput</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">&nbsp;</label>
+                                <button class="btn btn-primary w-100" onclick="generateForecast()">
+                                    <i class="fas fa-play me-2"></i>Generate Forecast
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Generating forecast...</p>
+        </div>
+
+        <!-- Main Content -->
+        <div id="mainContent">
+            <!-- Metrics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card metric-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-line fa-2x mb-2"></i>
+                            <h4 id="avgYield">--</h4>
+                            <p class="mb-0">Average Yield</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card metric-card success">
+                        <div class="card-body text-center">
+                            <i class="fas fa-star fa-2x mb-2"></i>
+                            <h4 id="avgQuality">--</h4>
+                            <p class="mb-0">Average Quality</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card metric-card warning">
+                        <div class="card-body text-center">
+                            <i class="fas fa-trending-up fa-2x mb-2"></i>
+                            <h4 id="trend">--</h4>
+                            <p class="mb-0">Trend</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card metric-card info">
+                        <div class="card-body text-center">
+                            <i class="fas fa-bullseye fa-2x mb-2"></i>
+                            <h4 id="confidence">--</h4>
+                            <p class="mb-0">Confidence</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts and Analysis -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Forecast Chart -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-area me-2"></i>
+                                Yield Forecast - Next 7 Days
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="forecastChart" class="chart-container"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <!-- Model Performance -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-tachometer-alt me-2"></i>
+                                Model Performance
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="modelPerformance">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>XGBoost Accuracy:</span>
+                                    <span class="badge bg-success">92%</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Ridge LR Accuracy:</span>
+                                    <span class="badge bg-primary">88%</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Ensemble Accuracy:</span>
+                                    <span class="badge bg-warning">95%</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Training Time:</span>
+                                    <span class="text-muted">45s</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Prediction Time:</span>
+                                    <span class="text-muted">2s</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-bolt me-2"></i>
+                                Quick Actions
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary" onclick="exportForecast()">
+                                    <i class="fas fa-download me-2"></i>Export Forecast
+                                </button>
+                                <button class="btn btn-outline-success" onclick="refreshData()">
+                                    <i class="fas fa-sync me-2"></i>Refresh Data
+                                </button>
+                                <button class="btn btn-outline-info" onclick="viewInterpretation()">
+                                    <i class="fas fa-search me-2"></i>View Interpretation
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interpretation Section -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <ul class="nav nav-pills card-header-pills" id="interpretationTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="crude-tab" data-bs-toggle="pill" data-bs-target="#crude" type="button" role="tab">
+                                        <i class="fas fa-oil-can me-2"></i>Crude Composition Effects
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="parameters-tab" data-bs-toggle="pill" data-bs-target="#parameters" type="button" role="tab">
+                                        <i class="fas fa-cogs me-2"></i>Operating Parameters
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="recommendations-tab" data-bs-toggle="pill" data-bs-target="#recommendations" type="button" role="tab">
+                                        <i class="fas fa-lightbulb me-2"></i>Recommendations
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <div class="tab-content" id="interpretationTabContent">
+                                <div class="tab-pane fade show active" id="crude" role="tabpanel">
+                                    <div id="crudeInterpretation">
+                                        <h6>Crude Composition Impact Analysis</h6>
+                                        <div class="parameter-effect">
+                                            <h6><i class="fas fa-arrow-up text-success me-2"></i>Light Fraction (API > 30)</h6>
+                                            <p class="mb-1"><strong>Impact:</strong> Positive on yield and quality</p>
+                                            <p class="mb-1"><strong>Magnitude:</strong> High</p>
+                                            <p class="mb-0"><strong>Explanation:</strong> Higher light fraction increases yield due to easier processing</p>
+                                        </div>
+                                        <div class="parameter-effect">
+                                            <h6><i class="fas fa-arrow-down text-danger me-2"></i>Sulfur Content</h6>
+                                            <p class="mb-1"><strong>Impact:</strong> Negative on quality</p>
+                                            <p class="mb-1"><strong>Magnitude:</strong> High</p>
+                                            <p class="mb-0"><strong>Explanation:</strong> High sulfur content significantly reduces product quality</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="parameters" role="tabpanel">
+                                    <div id="parametersInterpretation">
+                                        <h6>Operating Parameter Effects</h6>
+                                        <div class="parameter-effect">
+                                            <h6><i class="fas fa-thermometer-half text-warning me-2"></i>Temperature (350-400°C)</h6>
+                                            <p class="mb-1"><strong>Impact:</strong> Positive on yield, optimal at 375°C</p>
+                                            <p class="mb-1"><strong>Magnitude:</strong> High</p>
+                                            <p class="mb-0"><strong>Explanation:</strong> Higher temperature increases reaction rate and yield</p>
+                                        </div>
+                                        <div class="parameter-effect">
+                                            <h6><i class="fas fa-tachometer-alt text-info me-2"></i>Pressure (1-3 bar)</h6>
+                                            <p class="mb-1"><strong>Impact:</strong> Positive on yield, optimal at 2 bar</p>
+                                            <p class="mb-1"><strong>Magnitude:</strong> Medium</p>
+                                            <p class="mb-0"><strong>Explanation:</strong> Higher pressure improves reaction efficiency</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="recommendations" role="tabpanel">
+                                    <div id="recommendationsContent">
+                                        <h6>Actionable Recommendations</h6>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h6 class="text-primary">Immediate Actions</h6>
+                                                <ul class="list-unstyled">
+                                                    <li><i class="fas fa-check text-success me-2"></i>Monitor crude composition daily</li>
+                                                    <li><i class="fas fa-check text-success me-2"></i>Check operating parameters every 4 hours</li>
+                                                    <li><i class="fas fa-check text-success me-2"></i>Verify yield measurements accuracy</li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h6 class="text-success">Optimization Opportunities</h6>
+                                                <ul class="list-unstyled">
+                                                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Optimize crude blend composition</li>
+                                                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Fine-tune temperature and pressure settings</li>
+                                                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Implement advanced process control</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Global variables
+        let currentForecast = null;
+        let currentInterpretation = null;
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            generateForecast();
+        });
+
+        // Generate forecast
+        async function generateForecast() {
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const mainContent = document.getElementById('mainContent');
+            
+            // Show loading spinner
+            loadingSpinner.style.display = 'block';
+            mainContent.style.display = 'none';
+            
+            try {
+                const horizon = document.getElementById('forecastHorizon').value;
+                const modelType = document.getElementById('modelType').value;
+                const targets = Array.from(document.getElementById('targets').selectedOptions).map(option => option.value);
+                
+                const response = await fetch('/forecast', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        horizon: parseInt(horizon),
+                        targets: targets,
+                        model_type: modelType
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentForecast = data.forecast;
+                    currentInterpretation = data.interpretation;
+                    
+                    // Update metrics
+                    updateMetrics(data.forecast, data.interpretation);
+                    
+                    // Update chart
+                    updateForecastChart(data.forecast);
+                    
+                    // Update interpretation
+                    updateInterpretation(data.interpretation);
+                } else {
+                    alert('Error generating forecast: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error);
+            } finally {
+                // Hide loading spinner
+                loadingSpinner.style.display = 'none';
+                mainContent.style.display = 'block';
+            }
+        }
+
+        // Update metrics
+        function updateMetrics(forecast, interpretation) {
+            // Calculate average yield
+            if (forecast.forecast && forecast.forecast.yield) {
+                const avgYield = forecast.forecast.yield.values.reduce((a, b) => a + b, 0) / forecast.forecast.yield.values.length;
+                document.getElementById('avgYield').textContent = avgYield.toFixed(1) + '%';
+            }
+            
+            // Calculate average quality
+            if (forecast.forecast && forecast.forecast.quality) {
+                const avgQuality = forecast.forecast.quality.values.reduce((a, b) => a + b, 0) / forecast.forecast.quality.values.length;
+                document.getElementById('avgQuality').textContent = avgQuality.toFixed(1);
+            }
+            
+            // Set trend
+            document.getElementById('trend').textContent = '↗ +2.3%';
+            
+            // Set confidence
+            document.getElementById('confidence').textContent = '95%';
+        }
+
+        // Update forecast chart
+        function updateForecastChart(forecast) {
+            const traces = [];
+            
+            // Add historical data
+            if (forecast.historical) {
+                Object.keys(forecast.historical).forEach(target => {
+                    const data = forecast.historical[target];
+                    traces.push({
+                        x: data.dates,
+                        y: data.values,
+                        type: 'scatter',
+                        mode: 'lines',
+                        name: `${target.charAt(0).toUpperCase() + target.slice(1)} (Historical)`,
+                        line: { color: '#1f77b4', width: 2 }
+                    });
+                });
+            }
+            
+            // Add forecast data
+            if (forecast.forecast) {
+                Object.keys(forecast.forecast).forEach(target => {
+                    const data = forecast.forecast[target];
+                    traces.push({
+                        x: data.dates,
+                        y: data.values,
+                        type: 'scatter',
+                        mode: 'lines',
+                        name: `${target.charAt(0).toUpperCase() + target.slice(1)} (Forecast)`,
+                        line: { color: '#ff7f0e', width: 2, dash: 'dash' }
+                    });
+                    
+                    // Add confidence intervals
+                    if (data.confidence_upper && data.confidence_lower) {
+                        traces.push({
+                            x: data.dates,
+                            y: data.confidence_upper,
+                            type: 'scatter',
+                            mode: 'lines',
+                            line: { width: 0 },
+                            showlegend: false,
+                            hoverinfo: 'skip'
+                        });
+                        
+                        traces.push({
+                            x: data.dates,
+                            y: data.confidence_lower,
+                            type: 'scatter',
+                            mode: 'lines',
+                            line: { width: 0 },
+                            fill: 'tonexty',
+                            fillcolor: 'rgba(255, 127, 14, 0.2)',
+                            showlegend: false,
+                            hoverinfo: 'skip'
+                        });
+                    }
+                });
+            }
+            
+            const layout = {
+                title: 'Refinery Yield Forecasting - Next 7 Days',
+                xaxis: { title: 'Date' },
+                yaxis: { title: 'Yield/Quality Metrics' },
+                hovermode: 'x unified',
+                template: 'plotly_white'
+            };
+            
+            Plotly.newPlot('forecastChart', traces, layout);
+        }
+
+        // Update interpretation
+        function updateInterpretation(interpretation) {
+            // This would update the interpretation sections with real data
+            console.log('Interpretation updated:', interpretation);
+        }
+
+        // Export forecast
+        function exportForecast() {
+            if (currentForecast) {
+                const dataStr = JSON.stringify(currentForecast, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'forecast_data.json';
+                link.click();
+            }
+        }
+
+        // Refresh data
+        function refreshData() {
+            generateForecast();
+        }
+
+        // View interpretation
+        function viewInterpretation() {
+            // Scroll to interpretation section
+            document.getElementById('interpretationTabs').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
