@@ -72,11 +72,7 @@ export default function Dashboard() {
 
   const loadSystemMetrics = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/metrics`, {
-        headers: {
-          'Authorization': `Bearer ${session?.accessToken}`
-        }
-      })
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/metrics`)
       
       if (response.ok) {
         const data = await response.json()
@@ -105,9 +101,6 @@ export default function Dashboard() {
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/upload`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${session?.accessToken}`
-        },
         body: formData
       })
 
@@ -136,7 +129,6 @@ export default function Dashboard() {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/forecast`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${session?.accessToken}`,
           'Content-Type': 'application/json'
         }
       })

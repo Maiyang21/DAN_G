@@ -8,7 +8,7 @@ import logging
 from datetime import datetime, timedelta
 from flask import Flask, request, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+# Removed JWT authentication - using simple session-based auth
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -24,7 +24,7 @@ from app.api.aws_client import AWSClient
 from app.api.etl_processor import ETLProcessor
 from app.api.forecasting_engine import ForecastingEngine
 from app.api.interpretation_engine import InterpretationEngine
-from app.api.auth_service import AuthService
+from app.api.simple_auth import SimpleAuth, require_auth, require_auth_optional
 from app.database.models import db, User, ForecastHistory, Alert, SystemMetrics
 from app.config.settings import Config
 
@@ -34,7 +34,6 @@ app.config.from_object(Config)
 
 # Initialize extensions
 db.init_app(app)
-jwt = JWTManager(app)
 CORS(app, origins=os.environ.get('CORS_ORIGINS', '*').split(','))
 socketio = SocketIO(app, cors_allowed_origins="*")
 
@@ -43,7 +42,7 @@ aws_client = AWSClient()
 etl_processor = ETLProcessor()
 forecasting_engine = ForecastingEngine()
 interpretation_engine = InterpretationEngine()
-auth_service = AuthService()
+auth_service = SimpleAuth()
 
 # Configure logging
 logging.basicConfig(
@@ -56,114 +55,67 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# JWT error handlers
-@jwt.expired_token_loader
-def expired_token_callback(jwt_header, jwt_payload):
-    return jsonify({'error': 'Token has expired'}), 401
-
-@jwt.invalid_token_loader
-def invalid_token_callback(error):
-    return jsonify({'error': 'Invalid token'}), 401
-
-@jwt.unauthorized_loader
-def missing_token_callback(error):
-    return jsonify({'error': 'Authorization token required'}), 401
+# Authentication routes will use the imported require_auth decorator
 
 # Authentication routes
-@app.route('/api/auth/register', methods=['POST'])
-def register():
-    """User registration"""
-    try:
-        data = request.get_json()
-        
-        # Validate input
-        if not data or not data.get('username') or not data.get('email') or not data.get('password'):
-            return jsonify({'error': 'Missing required fields'}), 400
-        
-        # Check if user exists
-        if User.query.filter_by(username=data['username']).first():
-            return jsonify({'error': 'Username already exists'}), 409
-        
-        if User.query.filter_by(email=data['email']).first():
-            return jsonify({'error': 'Email already exists'}), 409
-        
-        # Create user
-        user = User(
-            username=data['username'],
-            email=data['email'],
-            first_name=data.get('first_name', ''),
-            last_name=data.get('last_name', ''),
-            role=data.get('role', 'user')
-        )
-        user.set_password(data['password'])
-        
-        db.session.add(user)
-        db.session.commit()
-        
-        # Generate JWT token
-        access_token = create_access_token(identity=user.id)
-        
-        return jsonify({
-            'success': True,
-            'message': 'User registered successfully',
-            'access_token': access_token,
-            'user': user.to_dict()
-        }), 201
-        
-    except Exception as e:
-        logger.error(f"Registration error: {str(e)}")
-        return jsonify({'error': 'Registration failed'}), 500
-
 @app.route('/api/auth/login', methods=['POST'])
 def login():
-    """User login"""
+    """User login with simple authentication"""
     try:
         data = request.get_json()
         
         if not data or not data.get('username') or not data.get('password'):
             return jsonify({'error': 'Username and password required'}), 400
         
-        # Find user
-        user = User.query.filter_by(username=data['username']).first()
+        # Authenticate user
+        auth_result = auth_service.authenticate_user(data['username'], data['password'])
         
-        if not user or not user.check_password(data['password']):
-            return jsonify({'error': 'Invalid credentials'}), 401
+        if not auth_result['success']:
+            return jsonify({'error': auth_result['error']}), 401
         
-        if not user.is_active:
-            return jsonify({'error': 'Account is disabled'}), 401
-        
-        # Update last login
-        user.last_login = datetime.utcnow()
-        db.session.commit()
-        
-        # Generate JWT token
-        access_token = create_access_token(identity=user.id)
-        
-        return jsonify({
-            'success': True,
-            'message': 'Login successful',
-            'access_token': access_token,
-            'user': user.to_dict()
-        })
+        # Create session
+        if auth_service.create_session(auth_result['user']):
+            return jsonify({
+                'success': True,
+                'message': 'Login successful',
+                'user': auth_result['user']
+            })
+        else:
+            return jsonify({'error': 'Session creation failed'}), 500
         
     except Exception as e:
         logger.error(f"Login error: {str(e)}")
         return jsonify({'error': 'Login failed'}), 500
 
+@app.route('/api/auth/logout', methods=['POST'])
+def logout():
+    """User logout"""
+    try:
+        if auth_service.logout_user():
+            return jsonify({
+                'success': True,
+                'message': 'Logout successful'
+            })
+        else:
+            return jsonify({'error': 'Logout failed'}), 500
+        
+    except Exception as e:
+        logger.error(f"Logout error: {str(e)}")
+        return jsonify({'error': 'Logout failed'}), 500
+
 @app.route('/api/auth/me', methods=['GET'])
-@jwt_required()
+@require_auth
 def get_current_user():
     """Get current user information"""
     try:
-        user_id = get_jwt_identity()
-        user = User.query.get(user_id)
+        user = auth_service.get_current_user()
         
         if not user:
             return jsonify({'error': 'User not found'}), 404
         
         return jsonify({
             'success': True,
-            'user': user.to_dict()
+            'user': user
         })
         
     except Exception as e:
@@ -172,11 +124,12 @@ def get_current_user():
 
 # Data processing routes
 @app.route('/api/upload', methods=['POST'])
-@jwt_required()
+@require_auth
 def upload_data():
     """Handle data upload and processing"""
     try:
-        user_id = get_jwt_identity()
+        # For demo purposes, use a default user ID
+        user_id = 'demo-user'
         
         if 'file' not in request.files:
             return jsonify({'error': 'No file provided'}), 400
@@ -208,11 +161,12 @@ def upload_data():
         return jsonify({'error': f'Processing failed: {str(e)}'}), 500
 
 @app.route('/api/forecast', methods=['POST'])
-@jwt_required()
+@require_auth
 def generate_forecast():
     """Generate forecasting predictions using AWS SageMaker"""
     try:
-        user_id = get_jwt_identity()
+        # For demo purposes, use a default user ID
+        user_id = 'demo-user'
         s3_key = session.get('processed_data_key')
         
         if not s3_key:
@@ -252,11 +206,12 @@ def generate_forecast():
         return jsonify({'error': f'Forecast generation failed: {str(e)}'}), 500
 
 @app.route('/api/forecast/history', methods=['GET'])
-@jwt_required()
+@require_auth
 def get_forecast_history():
     """Get user's forecast history"""
     try:
-        user_id = get_jwt_identity()
+        # For demo purposes, use a default user ID
+        user_id = 'demo-user'
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 10, type=int)
         
@@ -307,7 +262,7 @@ def health_check():
         }), 500
 
 @app.route('/api/metrics', methods=['GET'])
-@jwt_required()
+@require_auth
 def get_system_metrics():
     """Get system metrics"""
     try:
@@ -337,11 +292,12 @@ def handle_disconnect():
     logger.info(f"Client disconnected: {request.sid}")
 
 @socketio.on('request_update')
-@jwt_required()
+@require_auth
 def handle_update_request():
     """Handle real-time update requests"""
     try:
-        user_id = get_jwt_identity()
+        # For demo purposes, use a default user ID
+        user_id = 'demo-user'
         
         # Get latest metrics
         latest_metric = SystemMetrics.query.order_by(

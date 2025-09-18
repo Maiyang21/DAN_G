@@ -24,17 +24,25 @@ export default function Home() {
     setIsLoading(true)
 
     try {
-      const result = await signIn('credentials', {
-        username: loginData.username,
-        password: loginData.password,
-        redirect: false,
+      // Call backend login API
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: loginData.username,
+          password: loginData.password,
+        }),
       })
 
-      if (result?.error) {
-        toast.error('Invalid credentials')
-      } else {
+      const data = await response.json()
+
+      if (data.success) {
         toast.success('Login successful!')
         router.push('/dashboard')
+      } else {
+        toast.error(data.error || 'Invalid credentials')
       }
     } catch (error) {
       toast.error('Login failed')
