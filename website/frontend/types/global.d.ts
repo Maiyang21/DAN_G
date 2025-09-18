@@ -56,10 +56,32 @@ declare module 'react-plotly.js' {
 }
 
 declare module 'socket.io-client' {
-  import { ManagerOptions, SocketOptions } from 'socket.io-client/build/esm/manager';
-  import { Socket } from 'socket.io-client/build/esm/socket';
+  interface Socket {
+    on(event: string, listener: (...args: any[]) => void): Socket;
+    emit(event: string, ...args: any[]): Socket;
+    connect(): Socket;
+    disconnect(): Socket;
+    close(): void;
+    id: string;
+    connected: boolean;
+  }
+
+  interface ManagerOptions {
+    autoConnect?: boolean;
+    reconnection?: boolean;
+    reconnectionAttempts?: number;
+    reconnectionDelay?: number;
+    timeout?: number;
+  }
+
+  interface SocketOptions {
+    auth?: any;
+    query?: any;
+  }
+
+  function io(uri?: string, opts?: Partial<ManagerOptions & SocketOptions>): Socket;
   
-  export function io(uri?: string, opts?: Partial<ManagerOptions & SocketOptions>): Socket;
+  export default io;
   export { Socket, ManagerOptions, SocketOptions };
 }
 
