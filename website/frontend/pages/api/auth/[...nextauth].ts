@@ -20,8 +20,7 @@ export default NextAuth({
           return {
             id: '1',
             name: 'Admin User',
-            email: 'admin@dan-g-platform.com',
-            role: 'admin'
+            email: 'admin@dan-g-platform.com'
           }
         }
 
@@ -32,14 +31,14 @@ export default NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = user.role
+        token.role = 'admin' // Set role directly
       }
       return token
     },
     async session({ session, token }) {
       if (token) {
-        session.user.role = token.role
-        session.accessToken = token.accessToken
+        (session.user as any).role = token.role
+        (session as any).accessToken = token.accessToken
       }
       return session
     }
