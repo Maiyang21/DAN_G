@@ -293,9 +293,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact
 
-- **Project Lead**: [Your Name]
-- **Email**: [your.email@domain.com]
-- **GitHub**: [@yourusername]
+- **Project Lead**: ALEGE ABUBAKAR
+- **Email**: abumaiyang21@gmail.com
+- **GitHub**: Maiyang21
 
 ## 🔮 Roadmap
 
