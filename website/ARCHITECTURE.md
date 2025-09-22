@@ -50,3 +50,5 @@
 2. **JWT token** → Railway API
 3. **Token validation** → Railway (Backend)
 4. **Authorized requests** → AWS services
+
+

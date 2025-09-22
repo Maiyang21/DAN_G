@@ -295,3 +295,5 @@ class RealTimeMonitor:
     def collect_metrics(self) -> Dict:
         """Collect and return current metrics (for background tasks)"""
         return self._collect_system_metrics()
+
+

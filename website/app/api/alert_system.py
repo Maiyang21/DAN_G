@@ -388,3 +388,5 @@ class AlertSystem:
             logger.info(f"Cleared alerts older than {days} days")
         except Exception as e:
             logger.error(f"Error clearing old alerts: {str(e)}")
+
+

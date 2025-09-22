@@ -100,3 +100,5 @@ def require_auth_optional(f):
         # Allow the function to run regardless of auth status
         return f(*args, **kwargs)
     return decorated_function
+
+
